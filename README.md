@@ -63,5 +63,46 @@ caprover serversetup
 Follow the steps and login to your CapRover instance. When prompted to enter the root domain, enter `something.mydomain.com` assuming that you set `*.something.mydomain.com` to point to your IP address in step #2. Now you can access your CapRover from `captain.something.mydomain.com`. You can read more about hiding the root domain [here](https://caprover.com/docs/best-practices.html#hidden-root-domain).
 
 
+# Start in Caprover Server
+We go to `captain.mydomain.com` or any domain we have set. and After Login we can see the dashboard.
 
+## Install PostgreSQL
+Go to `One Click Apps` and Search for `postgreSQL`
+for `Version` i tested `15.4` and other fields could be default.
+after install its easy to access to the Database HOST,USERNAME,PASSWORD,DATABASE and other...
+
+## Install Django App
+for install a Django app, First we have to Check `Has Persistent Data` in the first Step! beacuase we want to use `Media` in Django App.
+Description of CapRover about this Checkbox:
+
+**Any database that stores data on disk has to have persistent data enabled.**
+
+**Otherwise all data will be lost when the container restarts (due to crash, host restart and etc...)**
+
+- A photo upload app which does not use third party storages like Amazon S3 to store images. Instead, it **locally stores uploaded images**.
+- A webapp that needs to store some user **uploaded files** and plugins locally on disk (like WordPress)
+
+### Project Config
+First step is `HTTP Settings` that contains SSL / Domain / HTTPS / Connect to Domain and this things thats so easy to understand and work with.
+
+we have to Create Nginx folder for `media` of our django to be available on the Web:
+
+```bash
+cd /captain/data/nginx-shared/
+mkdir YOUR_PROJECT_DIRECTORY_NAME
+cd YOUR_PROJECT_DIRECTORY_NAME
+mkdir media
+```
+This will be directory of you Project `media`.
+
+
+we Should append this code to end of Customize Nginix Config in the `Http Settings` tab (after click to edit nginx Configurations):
+```
+location /media/ {
+    alias /nginx-shared/YOUR_PROJECT_DIRECTORY_NAME/media/;
+}
+```
+this will access to users and project to work with `media`
+
+`Container HTTP Port` should set to Dockerfile EXPOSE port.  
 
