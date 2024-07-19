@@ -1,4 +1,4 @@
-# Run-Django-PostgreSQL-on-Caprover-with-Github-CICD
+# Run (Django + PostgreSQL) app on Ubuntu OS by Caprover with Github-CICD
 How to Run Django + Postgres + CI/CD on Caprover (ubuntu OS)
 
 # Docker 
