@@ -67,12 +67,17 @@ Follow the steps and login to your CapRover instance. When prompted to enter the
 We go to `captain.mydomain.com` or any domain we have set. and After Login we can see the dashboard.
 
 ## Install PostgreSQL
+
 Go to `One Click Apps` and Search for `postgreSQL`
+
 for `Version` i tested `15.4` and other fields could be default.
+
 after install its easy to access to the Database HOST,USERNAME,PASSWORD,DATABASE and other...
 
 ## Install Django App
+
 for install a Django app, First we have to Check `Has Persistent Data` in the first Step! beacuase we want to use `Media` in Django App.
+
 Description of CapRover about this Checkbox:
 
 **Any database that stores data on disk has to have persistent data enabled.**
@@ -83,6 +88,7 @@ Description of CapRover about this Checkbox:
 - A webapp that needs to store some user **uploaded files** and plugins locally on disk (like WordPress)
 
 ### Project HTTP Settings
+
 First step is `HTTP Settings` that contains SSL / Domain / HTTPS / Connect to Domain and this things thats so easy to understand and work with.
 
 we have to Create Nginx folder for `media` of our django to be available on the Web:
@@ -95,10 +101,12 @@ mkdir YOUR_PROJECT_DIRECTORY_NAME
 cd YOUR_PROJECT_DIRECTORY_NAME
 mkdir media
 ```
+
 This will be directory of you Project `media`.
 
 
 we Should append this code to end of Customize Nginix Config in the `Http Settings` tab (after click to edit nginx Configurations):
+
 ```
 location /media/ {
     alias /nginx-shared/YOUR_PROJECT_DIRECTORY_NAME/media/;
@@ -112,6 +120,7 @@ this will access to users and project to work with `media`
 
 
 ### Project App Configs
+
 in the `Environmental Variables` we have to set our .env Config as key value Pair
 
 Bulk text Example:
@@ -152,6 +161,7 @@ Scroll down to Deploy methods.
 Enable your `App Token` and we will use this in the `Github CI/CD Secrets` to access the github to Deploy your Project.
 
 ## Captain Definition
+
 create a file named as `captain-definition` and defind your `Dockerfile` location like this:
 
 ```
@@ -162,6 +172,7 @@ create a file named as `captain-definition` and defind your `Dockerfile` locatio
 ```
 
 ## Dockerfile 
+
 this is a example Dockerfile for Django app:
 
 ```
@@ -188,6 +199,7 @@ CMD ["sh","./entrypoint.sh"]
 ```
 
 ## Entry Point
+
 in here, we write the commands to Start our Django application:
 
 ```
@@ -199,8 +211,11 @@ gunicorn core.wsgi:application --bind "0.0.0.0:8000"
 ```
 
 ## Github Workflows
+
 its time to tell Github that we When wants you to update our Caporver Server.
+
 lets config our Django app Workflow in this address:
+
 **.github/workflows/deploy.yml**
 
 and then we copy this code to config our GitHub Workflow Action:
@@ -251,12 +266,15 @@ jobs:
           app: '${{ secrets.APP_NAME }}'
           token: '${{ secrets.APP_TOKEN }}'
 ```
+
 but somethings is missing and that's our `secrets`.
 
 ### Github Secrets
 
 we go to this address:
+
 ```https://github.com/YOUR_USERNAME/YOUR_PROJECT_NAME/settings/secrets/actions```
+
 this we click on  `New repository secret` and Add this secrets:
 
 - `APP_NAME` : name you app when you create on caprover.
