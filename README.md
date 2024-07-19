@@ -254,3 +254,18 @@ jobs:
 but somethings is missing and that's our `secrets`.
 
 ### Github Secrets
+
+we go to this address:
+```https://github.com/YOUR_USERNAME/YOUR_PROJECT_NAME/settings/secrets/actions```
+this we click on  `New repository secret` and Add this secrets:
+
+- `APP_NAME` : name you app when you create on caprover.
+- `APP_TOKEN` : the token that we have on caprover `Deployment` tab.
+- `CAPROVER_SERVER`: your domain like `captain.YOUR-DOMAIN.com`.
+
+** NOTE: CapRover server must be in the format of "https://captain.apps.YOUR-DOMAIN.com". You can set CAPROVER_SERVER as a Global Secret for all your private and/or public projects. **
+
+## Done
+
+Commit changes to your code and push in `production` branch to deploy! 
+
