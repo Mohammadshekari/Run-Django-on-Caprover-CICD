@@ -82,10 +82,12 @@ Description of CapRover about this Checkbox:
 - A photo upload app which does not use third party storages like Amazon S3 to store images. Instead, it **locally stores uploaded images**.
 - A webapp that needs to store some user **uploaded files** and plugins locally on disk (like WordPress)
 
-### Project Config
+### Project HTTP Settings
 First step is `HTTP Settings` that contains SSL / Domain / HTTPS / Connect to Domain and this things thats so easy to understand and work with.
 
 we have to Create Nginx folder for `media` of our django to be available on the Web:
+
+**Connect to Your SSH Server, then**:
 
 ```bash
 cd /captain/data/nginx-shared/
@@ -106,3 +108,149 @@ this will access to users and project to work with `media`
 
 `Container HTTP Port` should set to Dockerfile EXPOSE port.  
 
+`Force HTTPS by redirecting all HTTP traffic to HTTPS` this is better to be checked!
+
+
+### Project App Configs
+in the `Environmental Variables` we have to set our .env Config as key value Pair
+
+Bulk text Example:
+```
+SECRET_KEY=xxxxxxxxxxx
+POSTGRES_NAME=xxxxxxxx
+POSTGRES_USER=xxxxxxxx
+POSTGRES_PASS=xxxxxxxx
+POSTGRES_HOST=xxxxxxxx
+POSTGRES_PORT=xxxxxxxx
+```
+
+Then we Have `Persistent Directories` that points to `media` directory of django that we set in the previus part.
+
+Click on `Add Persistent Directories` and Set this Config:
+
+```
+Path in App:
+/usr/src/app/media
+```
+
+This Refers to media folder of Django on Docker.
+
+Then click on `Set specefic host path` and :
+
+```
+Path on Host:
+/captain/data/nginx-shared/examplegift/media
+```
+
+This refers to Where to Access media files that we already created in captain folder!
+
+
+### Project Deployment
+
+Scroll down to Deploy methods.
+
+Enable your `App Token` and we will use this in the `Github CI/CD Secrets` to access the github to Deploy your Project.
+
+## Captain Definition
+create a file named as `captain-definition` and defind your `Dockerfile` location like this:
+
+```
+{
+  "schemaVersion": 2,
+  "dockerfilePath": "./Dockerfile"
+}
+```
+
+## Dockerfile 
+this is a example Dockerfile for Django app:
+
+```
+FROM python:3.10-slim-buster
+
+LABEL maintainer="YOUR_ADDRESS@gmail.com"
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /usr/src/app
+
+COPY ./requirements.txt .
+COPY ./entrypoint.sh .
+COPY ./core .
+RUN chmod +x ./entrypoint.sh
+
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+
+EXPOSE 8000
+
+# execute our entrypoint.sh file
+CMD ["sh","./entrypoint.sh"]
+```
+
+## Entry Point
+in here, we write the commands to Start our Django application:
+
+```
+#!/bin/bash
+
+python manage.py collectstatic --noinput
+python manage.py migrate
+gunicorn core.wsgi:application --bind "0.0.0.0:8000"
+```
+
+## Github Workflows
+its time to tell Github that we When wants you to update our Caporver Server.
+lets config our Django app Workflow in this address:
+**.github/workflows/deploy.yml**
+
+and then we copy this code to config our GitHub Workflow Action:
+
+```
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ "production" ]
+
+  pull_request:
+    branches: [ "production" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Open Web Client Directory
+        working-directory: .
+        run: |
+          ls -la
+
+      - uses: a7ul/tar-action@v1.1.0
+        with:
+          command: c
+          cwd: "./"
+          files: |
+            core/
+            Dockerfile
+            entrypoint.sh
+            README.md
+            requirements.txt
+            captain-definition
+          outPath: deploy.tar
+
+      - name: Deploy App to CapRover
+        uses: caprover/deploy-from-github@v1.0.1
+        with:
+          server: '${{ secrets.CAPROVER_SERVER }}'
+          app: '${{ secrets.APP_NAME }}'
+          token: '${{ secrets.APP_TOKEN }}'
+```
+but somethings is missing and that's our `secrets`.
+
+### Github Secrets
