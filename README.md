@@ -148,7 +148,7 @@ Then click on `Set specefic host path` and :
 
 ```
 Path on Host:
-/captain/data/nginx-shared/examplegift/media
+/captain/data/nginx-shared/YOUR_PROJECT_DIRECTORY_NAME/media
 ```
 
 This refers to Where to Access media files that we already created in captain folder!
