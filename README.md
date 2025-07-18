@@ -52,6 +52,11 @@ Let's say you own `mydomain.com`. You can set `*.something.mydomain.com` as an `
 To confirm, go to https://mxtoolbox.com/DNSLookup.aspx and enter `randomthing123.something.mydomain.com` and check if IP address resolves to the IP you set in your DNS. Note that `randomthing123` is needed because you set a wildcard entry in your DNS by setting `*.something` as your host, not `something`.
 
 ## Step 3: Install CapRover CLI
+First you need to install `npm`:
+```bash
+sudo apt update
+sudo apt install nodejs npm -y
+```
 Assuming you have npm installed on your local machine (e.g., your laptop), simply run (add `sudo` if needed):
 ```bash
 npm install -g caprover
